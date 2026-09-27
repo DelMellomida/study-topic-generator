@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Study Topic Generator
+
+A focused study dashboard for drawing one learning prompt at a time. The app builds a shuffled pool from the full local topic bank, lets you draw or skip prompts, tracks progress through the current pool, and includes a one-hour deep work timer.
+
+## Features
+
+- Random topic drawing from the full local subject pool
+- Animated "choosing" state before each draw
+- Skip flow that returns the current topic to the pool
+- Progress stats for remaining, studied, and total topics
+- One-hour timer with start, pause, and reset controls
+- Light and dark workspace themes
+- Local session persistence through `localStorage`
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org/) 16
+- [React](https://react.dev/) 19
+- TypeScript
+- Tailwind CSS 4
+- ESLint
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+```
 
-## Learn More
+Runs the local Next.js development server.
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Creates a production build.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run start
+```
 
-## Deploy on Vercel
+Starts the production server after a build.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run lint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Runs ESLint.
+
+## Project Structure
+
+```text
+app/
+  page.tsx          Main study dashboard
+  globals.css       App styling and responsive layout
+components/
+  PoolStats.tsx     Topic pool progress panel
+  Timer.tsx         Focus timer panel
+  TopicCard.tsx     Current topic and draw controls
+data/
+  topics.json       Local subject/topic bank
+hooks/
+  useLocalStorage.ts
+  useTimer.ts
+lib/
+  sampling.ts       Pool creation, draw, skip, and shuffle helpers
+types/
+  index.ts          Shared TypeScript types
+tickets/
+  STUDY-001-build-study-topic-generator-ui.md
+```
+
+## Topic Data
+
+Topics live in `data/topics.json` as a map of subject names to topic lists. The initial pool includes every topic in the bank, then shuffles the combined result. With the current data, that gives you 408 prompts, enough for at least one topic per day for a full year.
+
+To add or update topics, edit `data/topics.json` and keep the same shape:
+
+```json
+{
+  "Subject": [
+    "Topic one",
+    "Topic two"
+  ]
+}
+```
+
+## State Model
+
+The app stores study progress in browser `localStorage` under the `study-topic-state-v2` key. Resetting the topic pool rebuilds a fresh shuffled pool from the current topic data and clears the session count.
