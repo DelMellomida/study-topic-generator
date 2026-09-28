@@ -13,6 +13,7 @@ import type {StudyState, TopicItem} from "@/types";
 
 const STUDY_STATE_VERSION = 2;
 const STUDY_STATE_STORAGE_KEY = "study-topic-state-v2";
+const THEME_STORAGE_KEY = "study-topic-theme-dark";
 const INITIAL_POOL = buildBalancedPool(topicBank);
 const INITIAL_STATE: StudyState = {
     pool: INITIAL_POOL,
@@ -23,10 +24,10 @@ const INITIAL_STATE: StudyState = {
 
 export default function Home() {
     const [studyState, setStudyState, hydrated] = useLocalStorage<StudyState>(STUDY_STATE_STORAGE_KEY, INITIAL_STATE);
+    const [isDarkMode, setIsDarkMode, themeHydrated] = useLocalStorage<boolean>(THEME_STORAGE_KEY, false);
     const [sessionCount, setSessionCount] = useState(0);
     const [drawingTopic, setDrawingTopic] = useState<TopicItem | null>(null);
     const [isDrawing, setIsDrawing] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(false);
     const drawIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const timer = useTimer();
 
@@ -71,7 +72,7 @@ export default function Home() {
 
     const studied = Math.max(0, studyState.totalAtReset - studyState.pool.length - (studyState.current ? 1 : 0));
 
-    if (!hydrated) {
+    if (!hydrated || !themeHydrated) {
         return <main className="app-shell app-shell--loading"><span className="loading-label">Preparing your study space...</span></main>;
     }
 
