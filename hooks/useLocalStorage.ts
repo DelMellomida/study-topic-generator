@@ -36,11 +36,18 @@ export function useLocalStorage<T>(
     }, [key, value, hydrated]);
 
     const setAndPersist = useCallback((next: T | ((prev: T) => T)) => {
-        setValue((prev) => 
-            typeof next === "function" ? (next as (prev: T) => T)(prev) : next
+        setValue((prev) => {
+            const nextValue = typeof next === "function" ? (next as (prev: T) => T)(prev) : next;
 
-        );
-    }, []);
+            try {
+                window.localStorage.setItem(key, JSON.stringify(nextValue));
+            } catch (error) {
+                console.error("Error saving to localStorage:", error);
+            }
+
+            return nextValue;
+        });
+    }, [key]);
 
     return [value, setAndPersist, hydrated];
 }
